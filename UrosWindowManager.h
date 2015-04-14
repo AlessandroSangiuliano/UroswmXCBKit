@@ -31,6 +31,8 @@
  * This method checks if another window manager is running
  */
 - (void) checkOthersWM;
+- (void) windowDidMap:(NSNotification*)notification;
+- (void) windowBecomeAvailable:(NSNotification*)notification;
 @end
 
 #endif // _UROSWINDOWMANAGER_H_

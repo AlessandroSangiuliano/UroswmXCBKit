@@ -13,6 +13,9 @@
 #import <XCBKit/XCBException.h>
 #import <XCBKit/XCBScreen.h>
 #import <XCBKit/XCBWindow.h>
+#import <XCBKit/ICCCM.h>
+#import <XCBKit/EWMH.h>
+#import <XCBKit/XCBAtomCache.h>
 
 #include <xcb/xproto.h>
 
@@ -20,15 +23,27 @@
 
 - (id) init
 {
-  self = [super init];
-  
-  if (self == nil)
-  {
-    return nil;
-  }
-  
-  theConnection = [XCBConnection sharedConnection];
-  return self;
+    self = [super init];
+    
+    if (self == nil)
+    {
+        return nil;
+    }
+
+    theConnection = [XCBConnection sharedConnection];
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    [defaultCenter addObserver: self
+	        selector: @selector(windowDidMap:)
+	            name: XCBWindowDidMapNotification
+	          object: nil];
+    
+    [defaultCenter addObserver: self
+                      selector: @selector(windowBecomeAvailable:)
+                          name: XCBWindowBecomeAvailableNotification
+                        object: nil];
+    [[XCBAtomCache sharedInstance] cacheAtoms: ICCCMAtomsList()];
+    [[XCBAtomCache sharedInstance] cacheAtoms: EWMHAtomsList()];
+    return self;
 }
 
 -(void) RunLoop
@@ -47,9 +62,9 @@
 -(void) checkOthersWM
 {
     xcb_generic_error_t *error;
-    //XCBRaiseGenericErrorException(error, @"<unknown>", @"Unknown asynchronous request (from processing event loop)");
     XCBWindow *rootWindow = [[[theConnection screens] objectAtIndex:0] rootWindow];
-    NSLog(@"La finestra root %@", rootWindow);
+    
+    //NSLog(@"The rootWindow %@", rootWindow);
     uint32_t mask = XCB_CW_EVENT_MASK;
     uint32_t values[2];
     values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT;
@@ -62,12 +77,29 @@
         free(error);
         exit(EXIT_FAILURE);
     }
+//check if the code below is correct, for now it works
+    values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY;
+    xcb_change_window_attributes_checked([theConnection connection], [rootWindow xcbWindowId], mask, values);
 }
 
 - (void)finishedProcessingEvents: (XCBConnection*)connection
 {
-    NSLog(@"Sono chiamato o no %hhu?", [theConnection needsFlush]);
     [connection setNeedsFlush:YES];
-     NSLog(@"Sono chiamato dopo o no %hhu?", [theConnection needsFlush]);
+}
+
+- (void) windowDidMap:(NSNotification*)notification
+{
+    NSLog(@"Mapped");
+}
+
+-(void) windowBecomeAvailable:(NSNotification*)notification
+{
+    NSLog(@"Window Availables %@", [notification object]);
+    NSLog(@"The parent %@", [[notification object] parent]);
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 @end
