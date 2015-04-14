@@ -55,7 +55,7 @@
 
     [self checkOthersWM];
     [theConnection setDelegate:self];
-    NSLog(@"Connessuto");
+    NSLog(@"Connected");
     [theConnection startMessageLoop];
 }
 
