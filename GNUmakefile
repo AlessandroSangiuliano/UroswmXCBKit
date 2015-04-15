@@ -36,7 +36,8 @@ UrosWindowManager.h
 # Objective-C Class files
 #
 uroswm_OBJC_FILES = \
-UrosWindowManager.m
+UrosWindowManager.m \
+UrosScreen.m
 
 #
 # Other sources
