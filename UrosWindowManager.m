@@ -10,6 +10,7 @@
 */
 
 #import "UrosWindowManager.h"
+#import "UrosScreen.h"
 #import <XCBKit/XCBException.h>
 #import <XCBKit/XCBScreen.h>
 #import <XCBKit/XCBWindow.h>
@@ -31,18 +32,31 @@
     }
 
     theConnection = [XCBConnection sharedConnection];
+    [theConnection setDelegate:self];
+    
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     [defaultCenter addObserver: self
-	        selector: @selector(windowDidMap:)
-	            name: XCBWindowDidMapNotification
-	          object: nil];
+                      selector: @selector(windowDidMap:)
+                          name: XCBWindowDidMapNotification
+                        object: nil];
     
     [defaultCenter addObserver: self
                       selector: @selector(windowBecomeAvailable:)
                           name: XCBWindowBecomeAvailableNotification
                         object: nil];
+    
     [[XCBAtomCache sharedInstance] cacheAtoms: ICCCMAtomsList()];
     [[XCBAtomCache sharedInstance] cacheAtoms: EWMHAtomsList()];
+    
+    uint32_t screen_id = 0;
+    FOREACH([theConnection screens], screen, XCBScreen*)
+    {
+        NSLog(@"Uroswm: what happens %@?", screen);
+        UrosScreen *urosScreen = [[UrosScreen alloc] initWithScreen: screen id: screen_id++];
+        [urosScreen handleScreen];
+        NSLog(@"Uroswm: Called?");
+    }
+
     return self;
 }
 
@@ -54,8 +68,7 @@
     }
 
     [self checkOthersWM];
-    [theConnection setDelegate:self];
-    NSLog(@"Connected");
+    NSLog(@"Uroswm: Connected");
     [theConnection startMessageLoop];
 }
 
@@ -73,7 +86,7 @@
     
     if (error != NULL && error->error_code == XCB_ACCESS)
     {
-        NSLog(@"Another window manager is running!");
+        NSLog(@"Uroswm: Another window manager is running!");
         free(error);
         exit(EXIT_FAILURE);
     }
@@ -89,13 +102,13 @@
 
 - (void) windowDidMap:(NSNotification*)notification
 {
-    NSLog(@"Mapped");
+    NSLog(@"Uroswm: Mapped");
 }
 
 -(void) windowBecomeAvailable:(NSNotification*)notification
 {
-    NSLog(@"Window Availables %@", [notification object]);
-    NSLog(@"The parent %@", [[notification object] parent]);
+    NSLog(@"Uroswm: Window Availables %@", [notification object]);
+    NSLog(@"Uroswm: The parent %@", [[notification object] parent]);
 }
 
 - (void) dealloc
