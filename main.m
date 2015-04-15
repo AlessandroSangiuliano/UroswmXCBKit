@@ -1,9 +1,11 @@
 /*
    Project: uroswm
+   
+   Copyright (C) 2015 Alex Sangiuliano
 
-   Author: alex,,,
+   Author: Alex Sangiuliano
 
-   Created: 2015-04-11 10:57:04 +0200 by alex
+   Created: 2015-04-11 10:57:04 +0200 by Alex Sangiuliano
 */
 
 #import <Foundation/Foundation.h>
