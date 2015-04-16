@@ -7,7 +7,7 @@ Goals:
 
 1) The first goal is to make Uroswm able to move a window on the screen
 2) Window resizing, minimizing; (fullscreen too?)
-3) Accomplish the rist two before...
+3) Accomplish the first two before...
 
 ===========
 
