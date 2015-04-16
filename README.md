@@ -27,7 +27,7 @@ Test: <br />
 I test uroswm with Xephyr, so you need to install it.<br />
 
 $ Xephyr -ac -screen 800x600 -reset :1 & <br />
-$ DISPLAT=:1 <br />
+$ DISPLAY=:1 <br />
 $ cd obj <br />
 $ ./uroswm & <br />
 
