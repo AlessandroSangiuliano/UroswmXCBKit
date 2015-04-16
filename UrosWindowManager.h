@@ -15,6 +15,8 @@
 #import <Foundation/Foundation.h>
 #import <XCBKit/XCBConnection.h>
 
+#import "UrosScreen.h"
+
 @interface UrosWindowManager : NSObject
 {
     XCBConnection *theConnection;
@@ -23,7 +25,7 @@
     *running one
     */
     //BOOL anotherWmIsRunning; 
-   
+   UrosScreen *urosScreen;
 }
 
 - (void) RunLoop;

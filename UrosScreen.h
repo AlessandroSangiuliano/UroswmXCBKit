@@ -15,12 +15,17 @@
 #import <Foundation/Foundation.h>
 #import <XCBKit/XCBScreen.h>
 #import <XCBKit/XCBWindow.h>
+#import <XCBKit/XCBSelection.h>
 
 
 @interface UrosScreen : NSObject
 {
     XCBScreen *uScreen;
     uint32_t screen_id;
+    
+    XCBWindow *managerWindow;
+    XCBSelection *managerSelection;
+    
 }
 
 - (id)initWithScreen: (XCBScreen*)screen id: (uint32_t)Id;

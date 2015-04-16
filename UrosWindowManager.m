@@ -52,7 +52,7 @@
     FOREACH([theConnection screens], screen, XCBScreen*)
     {
         NSLog(@"Uroswm: what happens %@?", screen);
-        UrosScreen *urosScreen = [[UrosScreen alloc] initWithScreen: screen id: screen_id++];
+        urosScreen = [[UrosScreen alloc] initWithScreen: screen id: screen_id++];
         [urosScreen handleScreen];
         NSLog(@"Uroswm: Called?");
     }
@@ -91,7 +91,8 @@
         exit(EXIT_FAILURE);
     }
 //check if the code below is correct, for now it works
-    values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY;
+    //values[0] = 1;CHECK ON THE MANUAL: it should be done in this way, but I don't get the expected beahvior
+    values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_KEY_PRESS;
     xcb_change_window_attributes_checked([theConnection connection], [rootWindow xcbWindowId], mask, values);
 }
 
@@ -103,6 +104,7 @@
 - (void) windowDidMap:(NSNotification*)notification
 {
     NSLog(@"Uroswm: Mapped");
+    NSLog(@"Uroswm: Other children %@" ,[[urosScreen screen] childWindows]);
 }
 
 -(void) windowBecomeAvailable:(NSNotification*)notification
